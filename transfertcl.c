@@ -70,8 +70,8 @@ void client_appli (char *serveur,char *service)
 	
 	int connexion = connect(id_socket,(struct sockaddr*)p_adr_socket,sizeof(struct sockaddr_in));
 
-	if (connexion == 1){
-		printf("\nERREUR : connexion impossible");
+	if (connexion == -1){
+		printf("\nERREUR : connexion impossible\n");
 		exit(-1);
 	}
 	printf("Connexion en cours...\n");
