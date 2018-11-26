@@ -122,10 +122,9 @@ void serveur_appli(char *port)
 	socklen_t taille_client = sizeof(struct sockaddr_in);  // Taille de la structure du client
 	
 	while(1){
-		
-		
 		id_socket_serveur_client = accept(id_main_socket_serveur,(struct sockaddr *) p_adr_socket,&taille_client); //on accepte la connexion du client
 		printf("Phase 4 : Acceptation de la connexion d'un client\n");
+		
 		if(id_socket_serveur_client < 0){
 			printf("Acceptation du client impossible, abandon\n");
 			exit(-1);
@@ -133,26 +132,27 @@ void serveur_appli(char *port)
 		printf("Phase 5 : Connexion établie\n");
 		
 		if(fork()==0){
-			printf("Processus fils crée\n");																					// On créer un processus fils
-			close(id_main_socket_serveur); 																						//on ferme la sokcet principale du serveur pour le fils seulement
+			printf("Processus fils crée\n");																									// On créer un processus fils
+			close(id_main_socket_serveur); 																										//on ferme la sokcet principale du serveur pour le fils seulement
 			
 			char message[10];
 
 			while(1){
-					read(id_socket_serveur_client,message,4);
-					printf("%s\n",message);
+					//read(id_socket_serveur_client,message,4);
+					//printf("%s\n",message);
 			}
 
-			close(id_socket_serveur_client);																					//les echanges avec le client sont terminés, on ferme la socket pour le processus fils
+			close(id_socket_serveur_client);																									//les echanges avec le client sont terminés, on ferme la socket pour le processus fils
 			printf("Fin processus fils\n");
 			exit(0);
 	}
-
 	 else {
-			close(id_socket_serveur_client);																					//on ferme la socket du client pour le serveur
+			close(id_socket_serveur_client);																									//on ferme la socket du client pour le serveur
 	}
-	close(id_main_socket_serveur);																								//on ferme la socket du serveur
+		close(id_socket_serveur_client);
 	}
+		close(id_main_socket_serveur);																											//on ferme la socket principale
+		
 /* A completer ... */
 																					
 }
