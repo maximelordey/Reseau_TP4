@@ -20,4 +20,4 @@ transfertse : transfertse.o
 
 
 clean :
-	rm -f ${EXEC} core
+	rm -f ${EXEC} core transfertse.o transfertcl.o
