@@ -15,9 +15,9 @@
 #include <curses.h> 		/* Primitives de gestion d'ecran */
 #include <sys/signal.h>
 #include <sys/wait.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <string.h>
-
+#include <netinet/in.h>
 #include <sys/socket.h>
 #include "fun.h"
 
@@ -59,7 +59,15 @@ void client_appli (char *serveur,char *service)
 			exit(-1);
 	}
 	printf("Creation du Socket...\n");
+	
+	
+	p_adr_socket = malloc(sizeof(struct sockaddr_in));
+	memset((void*)p_adr_socket,0,sizeof(struct sockaddr_in));
 
+	p_adr_socket->sin_family = AF_INET;
+	p_adr_socket->sin_port = (unsigned short)strtoul(service,NULL,0);
+	p_adr_socket->sin_addr.s_addr = inet_addr(serveur);
+	
 	int connexion = connect(id_socket,(struct sockaddr*)p_adr_socket,sizeof(struct sockaddr_in));
 
 	if (connexion == 1){
