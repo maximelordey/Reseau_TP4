@@ -58,7 +58,15 @@ void client_appli (char *serveur,char *service)
 			printf("\nERREUR : creation de socket impossible \n");
 			exit(-1);
 	}
-	
+	printf("Creation du Socket...\n");
+
+	int connexion = connect(id_socket,(struct sockaddr*)p_adr_socket,sizeof(struct sockaddr_in));
+
+	if (connexion == 1){
+		printf("\nERREUR : connexion impossible");
+		exit(-1);
+	}
+	printf("Connexion en cours...\n");
 }
 
 /*****************************************************************************/

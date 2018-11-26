@@ -7,10 +7,10 @@ fun.o :  fun.h fun.c
 		gcc -DDEBUG -c fun.c -Wall
 
 transfertcl.o : transfertcl.c
-	gcc -c transfertcl.c -lcurses -Wall
+	gcc -c transfertcl.c -Wall
 
 transfertse.o : transfertse.c
-	gcc -c transfertse.c -lcurses -Wall
+	gcc -c transfertse.c -Wall
 
 transfertcl : transfertcl.o
 	gcc -o transfertcl transfertcl.o ${OBJ1} 
