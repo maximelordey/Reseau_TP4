@@ -1,0 +1,64 @@
+/******************************************************************************/
+/*			Application: ...					*/
+/******************************************************************************/
+/*									      */
+/*			 programme  CLIENT				      */
+/*									      */
+/******************************************************************************/
+/*									      */
+/*		Auteurs : ... 					*/
+/*									      */
+/******************************************************************************/
+
+
+#include <stdio.h>
+#include <curses.h> 		/* Primitives de gestion d'ecran */
+#include <sys/signal.h>
+#include <sys/wait.h>
+#include<stdlib.h>
+#include <string.h>
+
+#include <sys/socket.h>
+#include "fun.h"
+
+#define SERVICE_DEFAUT "1111"
+#define SERVEUR_DEFAUT "127.0.0.1"
+
+int id_socket;																																	//entier qui endentifi la socket
+struct sockaddr_in *p_adr_socket;
+
+void client_appli (char *serveur, char *service);
+
+
+/*****************************************************************************/
+/*--------------- programme client -----------------------*/
+
+int main(int argc, char *argv[])
+{
+	char *serveur= SERVEUR_DEFAUT; /* serveur par defaut */
+	char *service= SERVICE_DEFAUT; /* numero de service par defaut (no de port) */
+	
+ if(argc != 3){
+	 printf("Usage:transfertcl nomServeyr n° port \n");
+	 exit(1);
+ }
+ serveur=argv[1];																																//On recupere la nom du serveur passé en parametre
+ service=argv[2];																																//on recupere le numero de port passé en parametre 
+ 
+ client_appli(serveur,service);
+}
+
+/*****************************************************************************/
+void client_appli (char *serveur,char *service)
+
+/* procedure correspondant au traitement du client de votre application */
+{
+	id_socket = socket(AF_INET,SOCK_STREAM,0);																		//on cree la socket pour le clien courant
+	if(id_socket == -1){
+			printf("\nERREUR : creation de socket impossible \n");
+			exit(-1);
+	}
+	
+}
+
+/*****************************************************************************/
