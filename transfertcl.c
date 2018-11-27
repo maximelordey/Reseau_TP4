@@ -23,9 +23,11 @@
 
 #define SERVICE_DEFAUT "1111"
 #define SERVEUR_DEFAUT "127.0.0.1"
+#define SIZECOMMANDE 50
 
 int id_socket;																																	//entier qui endentifi la socket
 struct sockaddr_in *p_adr_socket;
+char *commande;
 
 void client_appli (char *serveur, char *service);
 
@@ -44,7 +46,7 @@ int main(int argc, char *argv[])
  }
  serveur=argv[1];																																//On recupere la nom du serveur passé en parametre
  service=argv[2];																																//on recupere le numero de port passé en parametre 
- 
+ commande = malloc(SIZECOMMANDE);
  client_appli(serveur,service);
 }
 
@@ -74,7 +76,20 @@ void client_appli (char *serveur,char *service)
 		printf("\nERREUR : connexion impossible\n");
 		exit(-1);
 	}
-	printf("Connexion en cours...\n");
+	printf("Connexion établie\n");
+
+	int nbecrit;
+	int nblu;
+	m_fgets(commande,SIZECOMMANDE,stdin);
+	while ( strcmp(commande,"exit") != 0){
+		if( (nbecrit = write(id_socket,commande,strlen(commande))) != 0){
+			printf("envoie de la commande %s reussi\n",commande);
+			//read reponse
+		}
+		m_fgets(commande,SIZECOMMANDE,stdin);
+	}
+	close(id_socket);
+	
 }
 
 /*****************************************************************************/
