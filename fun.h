@@ -17,3 +17,4 @@
 void init_socket(char* port,struct sockaddr_in *p_adr_ser,char* adrIP);
 void m_fgets(char* commande,int size,FILE* stream);
 void shell(char* commande,char* buffer);
+void put(char* filename,char* buffer);

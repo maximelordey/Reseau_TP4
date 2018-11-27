@@ -32,3 +32,9 @@ void shell(char* commande,char* buffer){
 	}
 	pclose(file);
 }
+
+void put(char* filename,char* buffer){
+
+
+
+}
