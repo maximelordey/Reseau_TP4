@@ -83,8 +83,7 @@ void client_appli (char *serveur,char *service)
 	m_fgets(commande,SIZECOMMANDE,stdin);
 	while ( strcmp(commande,"exit") != 0){
 		if( (nbecrit = write(id_socket,commande,strlen(commande))) != 0){
-			printf("envoie de la commande %s reussi\n",commande);
-			//read reponse
+			
 		}
 		m_fgets(commande,SIZECOMMANDE,stdin);
 	}
