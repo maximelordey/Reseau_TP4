@@ -11,7 +11,7 @@ void init_socket(char* port,struct sockaddr_in *p_adr,char* adrIP){
     p_adr->sin_addr.s_addr = inet_addr(adrIP);                                       //Transforme l'ip en long int
 }
 
-void  m_fgets(char* commande,int size,FILE* stream){
+void  m_fgets(char* commande,int size,FILE* stream){	
 	printf("ubuntu@ubuntu:~$");
 	fflush(stdout);
         fgets(commande,size,stream);
