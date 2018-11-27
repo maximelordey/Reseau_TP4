@@ -29,19 +29,16 @@
 #define SERVICE_DEFAUT "1111"
 #define TAILLEMAX 27
 #define LOCALHOST "127.0.0.1"																									//on declare une macro qui contient l'adresse locale
-
+#define TAILLE_BUFFER 1024*sizeof(char)
 
 
 int id_main_socket_serveur;                                                     //on déclare la socket "principale" du serveur
 int id_socket_serveur_client;                                                   //on decalre une socket pour un client c
 
-char* tampon;                                                                   //on déclare notre tampon
-
-
+char* buffer;                                                                   //on déclare notre tampon
 
 struct sockaddr_in *p_adr_socket;
 
-const int TAILLE_BUFFER = 500*sizeof(char);
 
 
 
@@ -80,7 +77,7 @@ int main(int argc,char *argv[])
 	
 	/* service est le numero de port auquel sera affecte
 	ce serveur*/
-
+	buffer = malloc(TAILLE_BUFFER);
 	serveur_appli(port);
 }
 
@@ -135,12 +132,19 @@ void serveur_appli(char *port)
 			printf("Processus fils crée\n");																									// On créer un processus fils
 			close(id_main_socket_serveur); 																										//on ferme la sokcet principale du serveur pour le fils seulement
 			
-			char message[10];
+			char message[TAILLE_BUFFER];
 
 			while(1){
-					//read(id_socket_serveur_client,message,4);
-					//printf("%s\n",message);
-			}
+				read(id_socket_serveur_client,message,TAILLE_BUFFER);
+					if (strcmp(message,"put") == 0){
+						printf("le message est un put\n");
+					}else if(strcmp(message,"get") == 0){
+						printf("le message est un get\n");
+					}else{
+						shell(message,buffer);
+						write(id_socket_serveur_client,buffer,TAILLE_BUFFER);
+					}
+				}
 
 			close(id_socket_serveur_client);																									//les echanges avec le client sont terminés, on ferme la socket pour le processus fils
 			printf("Fin processus fils\n");

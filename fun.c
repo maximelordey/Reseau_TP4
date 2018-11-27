@@ -18,3 +18,17 @@ void  m_fgets(char* commande,int size,FILE* stream){
         commande[strlen(commande)-1] = '\0';
 }
 
+void shell(char* commande,char* buffer){
+	buffer[0]='\0';
+	char tampon[1024];
+	FILE *file;
+	if ((file = popen(commande, "r")) == NULL) {
+		perror("popen");
+		exit(1);
+	}
+	
+	while(fgets(tampon,1024, file) != NULL){
+		strcat(buffer,tampon);	
+	}
+	pclose(file);
+}
