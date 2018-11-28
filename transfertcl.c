@@ -78,7 +78,7 @@ void client_appli (char *serveur,char *service)
 	p_adr_socket->sin_port = (unsigned short)strtoul(service,NULL,0);
 	p_adr_socket->sin_addr.s_addr = inet_addr(serveur);
 	
-	printf("Phase 2 : Tentative de connexion ...\n", );
+	printf("Phase 2 : Tentative de connexion ...\n");
 	int connexion = connect(id_socket,(struct sockaddr*)p_adr_socket,sizeof(struct sockaddr_in));
 
 	if (connexion == -1){
@@ -90,16 +90,20 @@ void client_appli (char *serveur,char *service)
 	char* cmd;
 	char* arg;
 	m_fgets(commande,SIZEBUFFER,stdin);
+	
 	while ( strcmp(commande,"exit") != 0){
 		strcpy(copiecommande,commande);
 		cmd = strtok(copiecommande," ");
 		arg = strtok(NULL," ");
+		
 		if( write(id_socket,commande,SIZEBUFFER) != -1){
 			if ( strcmp(cmd,"get") == 0){
 				s_get(id_socket,buffer);
-			}else if( strcmp(cmd,"put") == 0){
+			}
+			else if( strcmp(cmd,"put") == 0){
 				s_put(id_socket,arg,buffer);
-			}else{
+			}
+			else{
 				read(id_socket,buffer,SIZEBUFFER);
 				printf("%s\n",buffer);
 			}

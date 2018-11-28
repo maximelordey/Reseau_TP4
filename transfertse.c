@@ -140,8 +140,8 @@ void serveur_appli(char *port)
 				read(id_socket_serveur_client,message,TAILLE_BUFFER);
 					
 					strcpy(copiecommande,message);
-		        	        cmd = strtok(copiecommande," ");
-	        	        	arg = strtok(NULL," ");
+		      cmd = strtok(copiecommande," ");
+	       	arg = strtok(NULL," ");
 
 					if (strcmp(cmd,"put") == 0){
 						s_get(id_socket_serveur_client,buffer);						
