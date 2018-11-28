@@ -68,7 +68,7 @@ void client_appli (char *serveur,char *service)
 			printf("\nERREUR : creation de socket impossible \n");
 			exit(-1);
 	}
-	printf("Creation du Socket...\n");
+	printf("Phase 1 : Creation du Socket...\n");
 	
 	
 	p_adr_socket = malloc(sizeof(struct sockaddr_in));
@@ -78,13 +78,14 @@ void client_appli (char *serveur,char *service)
 	p_adr_socket->sin_port = (unsigned short)strtoul(service,NULL,0);
 	p_adr_socket->sin_addr.s_addr = inet_addr(serveur);
 	
+	printf("Phase 2 : Tentative de connexion ...\n", );
 	int connexion = connect(id_socket,(struct sockaddr*)p_adr_socket,sizeof(struct sockaddr_in));
 
 	if (connexion == -1){
 		printf("\nERREUR : connexion impossible\n");
 		exit(-1);
 	}
-	printf("Connexion établie\n");
+	printf("Phase 3 :Connexion établie\n");
 	char* copiecommande = malloc(SIZEBUFFER);
 	char* cmd;
 	char* arg;
