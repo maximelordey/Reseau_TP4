@@ -138,20 +138,19 @@ void serveur_appli(char *port)
 			char message[TAILLE_BUFFER];
 			while(1){
 				read(id_socket_serveur_client,message,TAILLE_BUFFER);
-					
-					strcpy(copiecommande,message);
-		        	        cmd = strtok(copiecommande," ");
-	        	        	arg = strtok(NULL," ");
-
-					if (strcmp(cmd,"put") == 0){
-						s_get(id_socket_serveur_client,buffer);						
-					}else if(strcmp(cmd,"get") == 0){
-						s_put(id_socket_serveur_client,arg,buffer);
-					}else{
-						shell(message,buffer);
-						write(id_socket_serveur_client,buffer,TAILLE_BUFFER);
-					}
+				strcpy(copiecommande,message);
+		        	cmd = strtok(copiecommande," ");
+	        	        arg = strtok(NULL," ");
+				if (strcmp(cmd,"put") == 0){
+					s_get(id_socket_serveur_client,buffer);						
+				}else if(strcmp(cmd,"get") == 0){
+					s_put(id_socket_serveur_client,arg,buffer);
+				}else{
+					shell(message,buffer);
+					write(id_socket_serveur_client,buffer,TAILLE_BUFFER);
 				}
+				message[0]='\0';
+			}
 
 			close(id_socket_serveur_client);																									//les echanges avec le client sont terminés, on ferme la socket pour le processus fils
 			printf("Fin processus fils\n");

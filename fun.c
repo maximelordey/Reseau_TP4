@@ -4,14 +4,12 @@
 void init_socket(char* port,struct sockaddr_in *p_adr,char* adrIP){
   
     memset((void *)p_adr, 0, sizeof(struct sockaddr_in));											          //on initialise notre socket a vide
-    
-    
     p_adr->sin_family = AF_INET;
-    p_adr->sin_port = (unsigned short) strtoul(port, NULL, 0);;                 
+    p_adr->sin_port = (unsigned short) strtoul(port, NULL, 0);;
     p_adr->sin_addr.s_addr = inet_addr(adrIP);                                       //Transforme l'ip en long int
 }
 
-void  m_fgets(char* commande,int size,FILE* stream){	
+void  m_fgets(char* commande,int size,FILE* stream){
 	printf("ubuntu@ubuntu:~$");
 	fflush(stdout);
         fgets(commande,size,stream);
@@ -28,14 +26,13 @@ void shell(char* commande,char* buffer){
 	}
 	
 	while(fgets(tampon,1024, file) != NULL){
-		strcat(buffer,tampon);	
+		strcat(buffer,tampon);
 	}
 	pclose(file);
 }
 
 void s_put(int id_socket,char* filename,char* buffer){
 	FILE* file = fopen(filename,"r");
-
 	if(file == NULL){
 		write(id_socket,"ERROR",1024);
 		printf("ERREUR fichier inconnue\n");
@@ -47,7 +44,7 @@ void s_put(int id_socket,char* filename,char* buffer){
 		write(id_socket,filename,1024);
 		
 		while(fgets(buffer,1024, file) != NULL){
-        	        write(id_socket,buffer,1024);  
+        	        write(id_socket,buffer,1024);
         	}
 		write(id_socket,"EOF",1024);
 		printf("fichier %s envoiyé\n",filename);
@@ -59,13 +56,12 @@ void s_get(int id_socket,char* buffer){
 	char verif[1024];
 	char filename[1024];
 	read(id_socket,verif,1024);
-	verif[1023]='\0';
 
 	if (strcmp(verif,"NO_ERROR") != 0){
 		printf("Aucun fichier receptionner\n");
 	}else{
 		read(id_socket,filename,1024);
-		printf("debut du telechargement du fichier %s \n", filename);
+		printf("debut du telechargement du fichier %s\n", filename);
 		
 		FILE* file = fopen(filename,"w");
 		read(id_socket,buffer,1024);
@@ -77,5 +73,4 @@ void s_get(int id_socket,char* buffer){
 		printf("fin du telecharement\n");
 		fclose(file);
 	}
-
 }
