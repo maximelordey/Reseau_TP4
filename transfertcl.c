@@ -42,12 +42,17 @@ int main(int argc, char *argv[])
 	char *serveur= SERVEUR_DEFAUT; /* serveur par defaut */
 	char *service= SERVICE_DEFAUT; /* numero de service par defaut (no de port) */
 	
- if(argc != 3){
-	 printf("Usage:transfertcl nomServeyr n° port \n");
-	 exit(1);
- }
- serveur=argv[1];																																//On recupere la nom du serveur passé en parametre
- service=argv[2];																																//on recupere le numero de port passé en parametre 
+	if(argc == 1){
+  	 printf("L'adresse du serveur et le port n'ont pas été précisés, ce sont donc les valeurs par défauts qui seront utilisées : %s , %s \n",SERVEUR_DEFAUT,SERVICE_DEFAUT);
+   }
+   else if (argc == 2){
+  	 printf("Le port n'a pas été précisé, c'est donc celui par défaut qui sera utilisé : %s\n",SERVICE_DEFAUT);
+  	 serveur=argv[1];	
+   }
+   else{
+  	 serveur=argv[1];																																//On recupere la nom du serveur passé en parametre
+  	 service=argv[2];																																//on recupere le numero de port passé en parametre 
+   }
  commande = malloc(SIZEBUFFER);
  buffer = malloc(SIZEBUFFER);
  client_appli(serveur,service);
@@ -63,7 +68,7 @@ void client_appli (char *serveur,char *service)
 			printf("\nERREUR : creation de socket impossible \n");
 			exit(-1);
 	}
-	printf("Creation du Socket...\n");
+	printf("Phase 1 : Creation du Socket...\n");
 	
 	
 	p_adr_socket = malloc(sizeof(struct sockaddr_in));
@@ -73,27 +78,32 @@ void client_appli (char *serveur,char *service)
 	p_adr_socket->sin_port = (unsigned short)strtoul(service,NULL,0);
 	p_adr_socket->sin_addr.s_addr = inet_addr(serveur);
 	
+	printf("Phase 2 : Tentative de connexion ...\n");
 	int connexion = connect(id_socket,(struct sockaddr*)p_adr_socket,sizeof(struct sockaddr_in));
 
 	if (connexion == -1){
 		printf("\nERREUR : connexion impossible\n");
 		exit(-1);
 	}
-	printf("Connexion établie\n");
+	printf("Phase 3 :Connexion établie\n");
 	char* copiecommande = malloc(SIZEBUFFER);
 	char* cmd;
 	char* arg;
 	m_fgets(commande,SIZEBUFFER,stdin);
+	
 	while ( strcmp(commande,"exit") != 0){
 		strcpy(copiecommande,commande);
 		cmd = strtok(copiecommande," ");
 		arg = strtok(NULL," ");
+		
 		if( write(id_socket,commande,SIZEBUFFER) != -1){
 			if ( strcmp(cmd,"get") == 0){
 				s_get(id_socket,buffer);
-			}else if( strcmp(cmd,"put") == 0){
+			}
+			else if( strcmp(cmd,"put") == 0){
 				s_put(id_socket,arg,buffer);
-			}else{
+			}
+			else{
 				read(id_socket,buffer,SIZEBUFFER);
 				printf("%s\n",buffer);
 			}

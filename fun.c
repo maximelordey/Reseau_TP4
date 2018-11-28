@@ -62,15 +62,13 @@ void s_get(int id_socket,char* buffer){
 	}else{
 		read(id_socket,filename,1024);
 		printf("debut du telechargement du fichier %s\n", filename);
-		
 		FILE* file = fopen(filename,"w");
+	do{
 		read(id_socket,buffer,1024);
-		while( strcmp(buffer,"EOF") != 0){
-                	fputs(buffer,file);
-			read(id_socket,buffer,1024);
-		}
-		
-		printf("fin du telecharement\n");
+      		fputs(buffer,file);
+	}while( strcmp(buffer,"EOF") != 0);
 		fclose(file);
+		printf("fin du telecharement\n");
+		
 	}
 }
