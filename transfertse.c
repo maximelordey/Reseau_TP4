@@ -131,15 +131,22 @@ void serveur_appli(char *port)
 		if(fork()==0){
 			printf("Processus fils crée\n");																									// On créer un processus fils
 			close(id_main_socket_serveur); 																										//on ferme la sokcet principale du serveur pour le fils seulement
-			
-			char message[TAILLE_BUFFER];
 
+		        char* copiecommande = malloc(TAILLE_BUFFER);
+		        char* cmd;
+		        char* arg;
+			char message[TAILLE_BUFFER];
 			while(1){
 				read(id_socket_serveur_client,message,TAILLE_BUFFER);
-					if (strcmp(message,"put") == 0){
+					
+					strcpy(copiecommande,message);
+		        	        cmd = strtok(copiecommande," ");
+	        	        	arg = strtok(NULL," ");
+
+					if (strcmp(cmd,"put") == 0){
 						s_get(id_socket_serveur_client,buffer);						
-					}else if(strcmp(message,"get") == 0){
-						s_put(id_socket_serveur_client,"test.txt",buffer);
+					}else if(strcmp(cmd,"get") == 0){
+						s_put(id_socket_serveur_client,arg,buffer);
 					}else{
 						shell(message,buffer);
 						write(id_socket_serveur_client,buffer,TAILLE_BUFFER);

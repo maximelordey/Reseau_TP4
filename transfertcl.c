@@ -80,14 +80,19 @@ void client_appli (char *serveur,char *service)
 		exit(-1);
 	}
 	printf("Connexion établie\n");
-
+	char* copiecommande = malloc(SIZEBUFFER);
+	char* cmd;
+	char* arg;
 	m_fgets(commande,SIZEBUFFER,stdin);
 	while ( strcmp(commande,"exit") != 0){
+		strcpy(copiecommande,commande);
+		cmd = strtok(copiecommande," ");
+		arg = strtok(NULL," ");
 		if( write(id_socket,commande,SIZEBUFFER) != -1){
-			if ( strcmp(commande,"get") == 0){
+			if ( strcmp(cmd,"get") == 0){
 				s_get(id_socket,buffer);
-			}else if( strcmp(commande,"put") == 0){
-				s_put(id_socket,"./test.txt",buffer);
+			}else if( strcmp(cmd,"put") == 0){
+				s_put(id_socket,arg,buffer);
 			}else{
 				read(id_socket,buffer,SIZEBUFFER);
 				printf("%s\n",buffer);
