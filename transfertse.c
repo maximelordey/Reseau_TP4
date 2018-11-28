@@ -137,9 +137,9 @@ void serveur_appli(char *port)
 			while(1){
 				read(id_socket_serveur_client,message,TAILLE_BUFFER);
 					if (strcmp(message,"put") == 0){
-						printf("le message est un put\n");
+						s_get(id_socket_serveur_client,buffer);						
 					}else if(strcmp(message,"get") == 0){
-						printf("le message est un get\n");
+						s_put(id_socket_serveur_client,"test.txt",buffer);
 					}else{
 						shell(message,buffer);
 						write(id_socket_serveur_client,buffer,TAILLE_BUFFER);

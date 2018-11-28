@@ -33,8 +33,50 @@ void shell(char* commande,char* buffer){
 	pclose(file);
 }
 
-void put(char* filename,char* buffer){
+void s_put(int id_socket,char* filename,char* buffer){
+	FILE* file = fopen(filename,"r");
 
+	if(file == NULL){
+		write(id_socket,"ERROR",1024);
+		printf("ERREUR fichier inconnue\n");
+		printf("arret de l'envoie de fichier\n");
+	}else{
+		write(id_socket,"NO_ERROR",1024);
 
+		printf("envoie du fichier %s ...\n",filename);
+		write(id_socket,filename,1024);
+		
+		while(fgets(buffer,1024, file) != NULL){
+        	        write(id_socket,buffer,1024);  
+        	}
+		printf("fichier %s envoiyé\n",filename);
+		fclose(file);
+	}
+}
+
+void s_get(int id_socket,char* buffer){
+	char verif[1024];
+	char filename[1024];
+	read(id_socket,verif,1024);
+	verif[1023]='\0';
+
+	if (strcmp(verif,"NO_ERROR") != 0){
+		printf("Aucun fichier receptionner\n");
+	}else{
+		read(id_socket,filename,1024);
+		printf("debut du telechargement du fichier %s \n", filename);
+		
+		FILE* file = fopen(filename,"w");
+		int nb = read(id_socket,buffer,1024);
+		int result = fputs(buffer,file);
+		printf("%d\n",nb);
+		while( result != EOF || nb > 0){
+			nb = read(id_socket,buffer,1024);
+                	result = fputs(buffer,file);
+			printf("%d\n",nb);
+		}
+		printf("fin du telecharement\n");
+		fclose(file);
+	}
 
 }

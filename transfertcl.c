@@ -84,8 +84,14 @@ void client_appli (char *serveur,char *service)
 	m_fgets(commande,SIZEBUFFER,stdin);
 	while ( strcmp(commande,"exit") != 0){
 		if( write(id_socket,commande,SIZEBUFFER) != -1){
-			read(id_socket,buffer,SIZEBUFFER);
-			printf("%s\n",buffer);
+			if ( strcmp(commande,"get") == 0){
+				s_get(id_socket,buffer);
+			}else if( strcmp(commande,"put") == 0){
+				s_put(id_socket,"./test.txt",buffer);
+			}else{
+				read(id_socket,buffer,SIZEBUFFER);
+				printf("%s\n",buffer);
+			}
 		}
 		m_fgets(commande,SIZEBUFFER,stdin);
 	}
