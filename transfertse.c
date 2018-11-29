@@ -28,7 +28,7 @@
 
 #define SERVICE_DEFAUT "1111"
 #define TAILLEMAX 27
-#define LOCALHOST "127.0.0.1"																									//on declare une macro qui contient l'adresse locale
+#define LOCALHOST "127.0.0.1"																										//on declare une macro qui contient l'adresse locale
 
 
 int id_main_socket_serveur;                                                     //on déclare la socket "principale" du serveur
@@ -37,10 +37,6 @@ int id_socket_serveur_client;                                                   
 char* buffer;                                                                   //on déclare notre tampon
 
 struct sockaddr_in *p_adr_socket;
-
-
-
-
 
 void serveur_appli (char *service);   /* programme serveur */
 
@@ -54,17 +50,15 @@ int main(int argc,char *argv[])
 	srand(time(NULL));
 	
 	char* port;
-
-
 	/* Permet de passer un nombre de parametre variable a l'executable */
-	if(argc == 1){
-		printf("Le port du serveur n'a pas été saisi, le port part défaut sera donc utilisé : %s\n",SERVICE_DEFAUT);
+	if(argc == 1){																																//si l'utilisateur n'entre pas de port en argument
+		printf("Le port du serveur n'a pas été saisi, le port part défaut sera donc utilisé : %s\n",SERVICE_DEFAUT);	 //on le previens que c'est celui par défaut qui sera utilisé
 		port= SERVICE_DEFAUT; /* numero de service par defaut */
 	}
-	else{
-		port = argv[1];
-		if(strcmp(port,"0") == 0){
-			printf("Impossible d'utiliser le port 0, celui par défaut sera utilisé (%s)\n",SERVICE_DEFAUT);
+	else{																													
+		port = argv[1];																															//sinon on affecte celui entré par l'utilisateur
+		if(strcmp(port,"0") == 0){																									//si le port saisi est 0
+			printf("Impossible d'utiliser le port 0, celui par défaut sera utilisé (%s)\n",SERVICE_DEFAUT); //on averti que le port sera finalement celui par défaut
 			port = SERVICE_DEFAUT;
 		}
 		else{
@@ -72,12 +66,9 @@ int main(int argc,char *argv[])
 		}
 		
 	}
-	
-	
-	/* service est le numero de port auquel sera affecte
-	ce serveur*/
-	buffer = malloc(TAILLEBUFFER);
-	serveur_appli(port);
+
+	buffer = malloc(TAILLEBUFFER);																								//on allou la mémoire pour notre buffer		
+	serveur_appli(port);																													//on execute le corp du serveur
 }
 
 
@@ -93,18 +84,18 @@ void serveur_appli(char *port)
 	int sizeADDRIN = sizeof(struct sockaddr_in);
 	p_adr_socket = malloc(sizeADDRIN);																						//on initialise la plage mémoire pour notre socket
 	
-	if(id_main_socket_serveur == -1){
-			printf("\nERREUR : creation de socket impossible \n");
-			exit(-1);
+	if(id_main_socket_serveur == -1){																							//si la socket n'a pas pu être créer
+			printf("\nERREUR : creation de socket impossible \n");										//on averti l'utilisateur du problème
+			exit(-1);																																	//on arrete l'execution
 	}
 	
 	printf("Phase 2 : Initialisation de la socket du serveur\n");
 	init_socket(port,p_adr_socket,LOCALHOST);																			//on appel la fonction init qui remplie la structure de socket
-	int resultBind =  bind(id_main_socket_serveur,(struct sockaddr *)p_adr_socket, sizeADDRIN);
+	int resultBind =  bind(id_main_socket_serveur,(struct sockaddr *)p_adr_socket, sizeADDRIN); //on associe la socket aux adresses
 
-	if (resultBind == -1){
-		printf("\nERREUR : bind de socket \n");
-		exit(-1);
+	if (resultBind == -1){																												//si problème de bind
+		printf("\nERREUR : bind de socket \n");																			//on averti l'utilisateur
+		exit(-1);																																		//on stop l'execution
 	}
 	
 	printf("Phase 3 : A l'écoute d'une connexion ...\n");
@@ -115,52 +106,56 @@ void serveur_appli(char *port)
 		exit(-1);
 	}
 	
-	socklen_t taille_client = sizeof(struct sockaddr_in);  // Taille de la structure du client
+	socklen_t taille_client = sizeof(struct sockaddr_in);  												// Taille de la structure du client
 	
 	while(1){
 		id_socket_serveur_client = accept(id_main_socket_serveur,(struct sockaddr *) p_adr_socket,&taille_client); //on accepte la connexion du client
 		printf("Phase 4 : Acceptation de la connexion d'un client\n");
 		
-		if(id_socket_serveur_client < 0){
-			printf("Acceptation du client impossible, abandon\n");
+		if(id_socket_serveur_client < 0){																						//si problème d'acceptation
+			printf("Acceptation du client impossible, abandon\n");										//on averti l'utilisateur
 			exit(-1);
 		}
 		printf("Phase 5 : Connexion établie\n");
 		
-		if(fork()==0){
-			printf("Processus fils crée\n");																									// On créer un processus fils
-			close(id_main_socket_serveur); 																										//on ferme la sokcet principale du serveur pour le fils seulement
+		if(fork()==0){																															//on créer un fils et si on est dans ce dernier
+			printf("Processus fils crée\n");																					// On créer un processus fils
+			close(id_main_socket_serveur); 																						//on ferme la sokcet principale du serveur pour le fils seulement
 
-		        char* copiecommande = malloc(TAILLEBUFFER);
-		        char* cmd;
-		        char* arg;
+		  char* copiecommande = malloc(TAILLEBUFFER);
+		  char* cmd;
+		  char* arg;
 			char message[TAILLEBUFFER];
+			
 			while(1){
-				read(id_socket_serveur_client,message,TAILLEBUFFER);
-				strcpy(copiecommande,message);
-		        	cmd = strtok(copiecommande," ");
-	        	        arg = strtok(NULL," ");
-				if (strcmp(cmd,"put") == 0){
-					s_get(id_socket_serveur_client,buffer);						
-				}else if(strcmp(cmd,"get") == 0){
-					s_put(id_socket_serveur_client,arg,buffer);
-				}else{
-					shell(message,buffer);
-					write(id_socket_serveur_client,buffer,TAILLEBUFFER);
+				read(id_socket_serveur_client,message,TAILLEBUFFER);                    //on lit la commande entrée par l'utilisateur
+				strcpy(copiecommande,message);																					//on la copie dans copiecommande
+		    cmd = strtok(copiecommande," ");																				//on prend la premiere partie de la commande (partie droite avant le premier espace) dans cmd
+	      arg = strtok(NULL," ");																									//on prend la partie gauche dans arg (nom du fichier)
+				
+				if (strcmp(cmd,"put") == 0){																						//si le client veut upload
+					s_get(id_socket_serveur_client,buffer);																//alors on télécharge le fichier envoyé
 				}
-				message[0]='\0';
+				else if(strcmp(cmd,"get") == 0){																				//sinon si le client veut récupere un fichier
+					s_put(id_socket_serveur_client,arg,buffer);														//on lui envoi celui qu'il a demandé
+				}
+				else{																																		//sinon si la commande est autre (ls/pwd)
+					shell(message,buffer);																								//on execute la commande
+					write(id_socket_serveur_client,buffer,TAILLEBUFFER);									//on envoi le resultat au client
+				}
+				message[0]='\0';																												//on vide notre buffer
 			}
 
-			close(id_socket_serveur_client);																									//les echanges avec le client sont terminés, on ferme la socket pour le processus fils
+			close(id_socket_serveur_client);																					//les echanges avec le client sont terminés, on ferme la socket pour le processus fils
 			printf("Fin processus fils\n");
 			exit(0);
 	}
 	 else {
-			close(id_socket_serveur_client);																									//on ferme la socket du client pour le serveur
+			close(id_socket_serveur_client);																					//on ferme la socket du client pour le serveur
 	}
-		close(id_socket_serveur_client);
+		close(id_socket_serveur_client);																						//on ferme la socket
 	}
-		close(id_main_socket_serveur);																											//on ferme la socket principale
+		close(id_main_socket_serveur);																							//on ferme la socket principale
 		
 /* A completer ... */
 																					
