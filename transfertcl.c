@@ -23,8 +23,6 @@
 
 #define SERVICE_DEFAUT "1111"
 #define SERVEUR_DEFAUT "127.0.0.1"
-#define SIZECOMMANDE 50
-#define SIZEBUFFER 1024*sizeof(char)
 
 int id_socket;																																	//entier qui endentifi la socket
 struct sockaddr_in *p_adr_socket;
@@ -53,8 +51,8 @@ int main(int argc, char *argv[])
   	 serveur=argv[1];																																//On recupere la nom du serveur passé en parametre
   	 service=argv[2];																																//on recupere le numero de port passé en parametre 
    }
- commande = malloc(SIZEBUFFER);
- buffer = malloc(SIZEBUFFER);
+ commande = malloc(TAILLEBUFFER);
+ buffer = malloc(TAILLEBUFFER);
  client_appli(serveur,service);
 }
 
@@ -86,29 +84,30 @@ void client_appli (char *serveur,char *service)
 		exit(-1);
 	}
 	printf("Phase 3 :Connexion établie\n");
-	char* copiecommande = malloc(SIZEBUFFER);
+	char* copiecommande = malloc(TAILLEBUFFER);
 	char* cmd;
 	char* arg;
-	m_fgets(commande,SIZEBUFFER,stdin);
-	
+	m_fgets(commande,TAILLEBUFFER,stdin);
 	while ( strcmp(commande,"exit") != 0){
-		strcpy(copiecommande,commande);
-		cmd = strtok(copiecommande," ");
-		arg = strtok(NULL," ");
+		if ( strlen(commande) != 0){
+			strcpy(copiecommande,commande);
+			cmd = strtok(copiecommande," ");
+			arg = strtok(NULL," ");
 		
-		if( write(id_socket,commande,SIZEBUFFER) != -1){
-			if ( strcmp(cmd,"get") == 0){
-				s_get(id_socket,buffer);
-			}
-			else if( strcmp(cmd,"put") == 0){
-				s_put(id_socket,arg,buffer);
-			}
-			else{
-				read(id_socket,buffer,SIZEBUFFER);
-				printf("%s\n",buffer);
+			if( write(id_socket,commande,TAILLEBUFFER) != -1){
+				if ( strcmp(cmd,"get") == 0){
+					s_get(id_socket,buffer);
+				}
+				else if( strcmp(cmd,"put") == 0){
+					s_put(id_socket,arg,buffer);
+				}
+				else{
+					read(id_socket,buffer,TAILLEBUFFER);
+					printf("%s\n",buffer);
+				}
 			}
 		}
-		m_fgets(commande,SIZEBUFFER,stdin);
+		m_fgets(commande,TAILLEBUFFER,stdin);
 	}
 	close(id_socket);
 	

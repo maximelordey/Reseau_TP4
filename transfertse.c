@@ -29,7 +29,6 @@
 #define SERVICE_DEFAUT "1111"
 #define TAILLEMAX 27
 #define LOCALHOST "127.0.0.1"																									//on declare une macro qui contient l'adresse locale
-#define TAILLE_BUFFER 1024*sizeof(char)
 
 
 int id_main_socket_serveur;                                                     //on déclare la socket "principale" du serveur
@@ -77,7 +76,7 @@ int main(int argc,char *argv[])
 	
 	/* service est le numero de port auquel sera affecte
 	ce serveur*/
-	buffer = malloc(TAILLE_BUFFER);
+	buffer = malloc(TAILLEBUFFER);
 	serveur_appli(port);
 }
 
@@ -132,12 +131,12 @@ void serveur_appli(char *port)
 			printf("Processus fils crée\n");																									// On créer un processus fils
 			close(id_main_socket_serveur); 																										//on ferme la sokcet principale du serveur pour le fils seulement
 
-		        char* copiecommande = malloc(TAILLE_BUFFER);
+		        char* copiecommande = malloc(TAILLEBUFFER);
 		        char* cmd;
 		        char* arg;
-			char message[TAILLE_BUFFER];
+			char message[TAILLEBUFFER];
 			while(1){
-				read(id_socket_serveur_client,message,TAILLE_BUFFER);
+				read(id_socket_serveur_client,message,TAILLEBUFFER);
 				strcpy(copiecommande,message);
 		        	cmd = strtok(copiecommande," ");
 	        	        arg = strtok(NULL," ");
@@ -147,7 +146,7 @@ void serveur_appli(char *port)
 					s_put(id_socket_serveur_client,arg,buffer);
 				}else{
 					shell(message,buffer);
-					write(id_socket_serveur_client,buffer,TAILLE_BUFFER);
+					write(id_socket_serveur_client,buffer,TAILLEBUFFER);
 				}
 				message[0]='\0';
 			}

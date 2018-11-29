@@ -12,6 +12,8 @@
 
 #include <netinet/in.h>
 #include <netdb.h>
+#define TAILLEBUFFER 256
+
 
 
 void init_socket(char* port,struct sockaddr_in *p_adr_ser,char* adrIP);

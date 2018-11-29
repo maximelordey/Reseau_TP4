@@ -18,55 +18,57 @@ void  m_fgets(char* commande,int size,FILE* stream){
 
 void shell(char* commande,char* buffer){
 	buffer[0]='\0';
-	char tampon[1024];
+	char tampon[TAILLEBUFFER];
 	FILE *file;
 	if ((file = popen(commande, "r")) == NULL) {
 		perror("popen");
 		exit(1);
 	}
 	
-	while(fgets(tampon,1024, file) != NULL){
+	while(fgets(tampon,TAILLEBUFFER, file) != NULL){
 		strcat(buffer,tampon);
 	}
 	pclose(file);
 }
 
 void s_put(int id_socket,char* filename,char* buffer){
-	FILE* file = fopen(filename,"r");
+	FILE* file = fopen(filename,"rb");
 	if(file == NULL){
-		write(id_socket,"ERROR",1024);
+		write(id_socket,"ERROR",TAILLEBUFFER);
 		printf("ERREUR fichier inconnue\n");
 		printf("arret de l'envoie de fichier\n");
 	}else{
-		write(id_socket,"NO_ERROR",1024);
-
+		write(id_socket,"NO_ERROR",TAILLEBUFFER);
+		int descriptor = fileno(file);
 		printf("envoie du fichier %s ...\n",filename);
-		write(id_socket,filename,1024);
-		
-		while(fgets(buffer,1024, file) != NULL){
-        	        write(id_socket,buffer,1024);
+		write(id_socket,filename,TAILLEBUFFER);
+		int lu;
+		while( (lu=read(descriptor,buffer,TAILLEBUFFER)) > 0){
+        	        write(id_socket,buffer,lu);
         	}
-		write(id_socket,"EOF",1024);
 		printf("fichier %s envoiyé\n",filename);
+		fclose(file);
 	}
-	fclose(file);
 }
 
 void s_get(int id_socket,char* buffer){
-	char verif[1024];
-	char filename[1024];
-	read(id_socket,verif,1024);
+	char verif[TAILLEBUFFER];
+	char filename[TAILLEBUFFER];
+	read(id_socket,verif,TAILLEBUFFER);
 
 	if (strcmp(verif,"NO_ERROR") != 0){
 		printf("Aucun fichier receptionner\n");
 	}else{
-		read(id_socket,filename,1024);
+		read(id_socket,filename,TAILLEBUFFER);
 		printf("debut du telechargement du fichier %s\n", filename);
 		FILE* file = fopen(filename,"w");
-	do{
-		read(id_socket,buffer,1024);
-      		fputs(buffer,file);
-	}while( strcmp(buffer,"EOF") != 0);
+		int descriptor = fileno(file);
+		int octets_lu = read(id_socket,buffer,TAILLEBUFFER);
+		while(octets_lu == TAILLEBUFFER){
+	        	write(descriptor,buffer,TAILLEBUFFER);
+			octets_lu = read(id_socket,buffer,TAILLEBUFFER);
+		}
+			write(descriptor,buffer,octets_lu);
 		fclose(file);
 		printf("fin du telecharement\n");
 		
